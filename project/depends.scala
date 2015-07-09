@@ -19,7 +19,6 @@ object depends {
       (if (scalazVersion.startsWith("7.1")) Seq("org.scalaz.stream" %% "scalaz-stream" % "0.7a")
        else                                 Seq("org.scalaz.stream" %% "scalaz-stream" % "0.7"))
 
-  lazy val scalacheck    = Seq("org.scalacheck" %% "scalacheck"   % "1.12.2")
   lazy val mockito       = Seq("org.mockito"    % "mockito-core"  % "1.9.5")
   lazy val junit         = Seq("junit"          % "junit"         % "4.12")
   lazy val hamcrest      = Seq("org.hamcrest"   % "hamcrest-core" % "1.3")

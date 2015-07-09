@@ -35,7 +35,7 @@ object build extends Build {
       releaseSettings          ++
       siteSettings             ++
       Seq(name := "specs2", packagedArtifacts := Map.empty)
-  ).aggregate(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, scalacheck, mock, tests)
+  ).aggregate(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, mock, tests)
    .enablePlugins(GitBranchPrompt)
   
   /** COMMON SETTINGS */
@@ -64,7 +64,7 @@ object build extends Build {
       libraryDependencies ++= depends.classycle ++ depends.compiler(scalaVersion.value)) ++
     moduleSettings("analysis") ++
     Seq(name := "specs2-analysis")
-  ).dependsOn(common % "test->test", core, matcher, scalacheck % "test")
+  ).dependsOn(common % "test->test", core, matcher)
 
   lazy val common = Project(id = "common", base = file("common"),
     settings = moduleSettings("common") ++
@@ -72,8 +72,7 @@ object build extends Build {
           libraryDependencies ++=
             depends.scalaz(scalazVersion.value) ++
             depends.reflect(scalaVersion.value) ++
-            depends.paradise(scalaVersion.value) ++
-            depends.scalacheck.map(_ % "test"),
+            depends.paradise(scalaVersion.value),
           name := "specs2-common")
   )
 
@@ -92,12 +91,12 @@ object build extends Build {
   lazy val examples = Project(id = "examples", base = file("examples"),
     settings = moduleSettings("examples") ++
       Seq(name := "specs2-examples")
-  ).dependsOn(common, matcher, matcherExtra, core, analysis, form, html, markdown, gwt, junit, scalacheck, mock)
+  ).dependsOn(common, matcher, matcherExtra, core, analysis, form, html, markdown, gwt, junit, mock)
 
   lazy val form = Project(id = "form", base = file("form"),
     settings = moduleSettings("form") ++
       Seq(name := "specs2-form")
-  ).dependsOn(core, markdown, matcherExtra, scalacheck % "test->test")
+  ).dependsOn(core, markdown, matcherExtra)
 
   lazy val guide = Project(id = "guide", base = file("guide"),
     settings = moduleSettings("guide") ++
@@ -110,14 +109,14 @@ object build extends Build {
       libraryDependencies ++= depends.shapeless(scalaVersion.value)) ++
       moduleSettings("gwt") ++
       Seq(name := "specs2-gwt")
-  ).dependsOn(core, matcherExtra, scalacheck)
+  ).dependsOn(core, matcherExtra)
 
   lazy val html = Project(id = "html", base = file("html"),
     settings =
       Seq(libraryDependencies += depends.tagsoup) ++
       moduleSettings("html") ++
       Seq(name := "specs2-html")
-  ).dependsOn(form, mock % "test", matcherExtra % "test", scalacheck % "test")
+  ).dependsOn(form, mock % "test", matcherExtra % "test")
 
   lazy val junit = Project(id = "junit", base = file("junit"),
     settings = Seq(
@@ -152,13 +151,6 @@ object build extends Build {
         depends.mockito) ++
       moduleSettings("mock") ++
       Seq(name := "specs2-mock")
-  ).dependsOn(core)
-
-  lazy val scalacheck = Project(id = "scalacheck", base = file("scalacheck"),
-    settings = Seq(
-      libraryDependencies ++= depends.scalacheck) ++
-      moduleSettings("scalacheck") ++
-      Seq(name := "specs2-scalacheck")
   ).dependsOn(core)
 
   lazy val tests = Project(id = "tests", base = file("tests"),
@@ -255,11 +247,11 @@ object build extends Build {
   )
 
   lazy val aggregateCompile = ScopeFilter(
-    inProjects(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, scalacheck, mock),
+    inProjects(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, mock),
     inConfigurations(Compile))
 
   lazy val aggregateTest = ScopeFilter(
-    inProjects(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, scalacheck, mock, guide, examples),
+    inProjects(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, mock, guide, examples),
     inConfigurations(Test))
 
   lazy val releaseOfficialProcess = SettingKey[Seq[ReleaseStep]]("release-official-process")
