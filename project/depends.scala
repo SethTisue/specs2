@@ -32,6 +32,10 @@ object depends {
 
   lazy val tagsoup = "org.ccil.cowan.tagsoup" % "tagsoup" % "1.2"
 
+  lazy val parserCombinators = Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4")
+
+  lazy val scalaXml = Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.4")
+
   def paradise(scalaVersion: String) =
     if (scalaVersion.startsWith("2.11")) Nil
     else  Seq(compilerPlugin("org.scalamacros" %% "paradise"    % "2.0.1" cross CrossVersion.full),
