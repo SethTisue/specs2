@@ -34,8 +34,8 @@ object build extends Build {
       compatibilitySettings    ++
       releaseSettings          ++
       siteSettings             ++
-      Seq(name := "specs2", packagedArtifacts := Map.empty)
-  ).aggregate(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, scalacheck, mock, tests)
+      Seq(name := "specs2")
+  ).aggregate(common, matcher, matcherExtra, core, html, analysis, form, markdown, junit, scalacheck, mock, tests)
    .enablePlugins(GitBranchPrompt)
 
   /** COMMON SETTINGS */
@@ -92,7 +92,7 @@ object build extends Build {
   lazy val examples = Project(id = "examples", base = file("examples"),
     settings = moduleSettings("examples") ++
       Seq(name := "specs2-examples")
-  ).dependsOn(common, matcher, matcherExtra, core, analysis, form, html, markdown, gwt, junit, scalacheck, mock)
+  ).dependsOn(common, matcher, matcherExtra, core, analysis, form, html, markdown, junit, scalacheck, mock)
 
   lazy val form = Project(id = "form", base = file("form"),
     settings = moduleSettings("form") ++
@@ -105,12 +105,12 @@ object build extends Build {
       documentationSettings
   ).dependsOn(examples % "compile->compile;test->test")
 
-  lazy val gwt = Project(id = "gwt", base = file("gwt"),
-    settings = Seq(
-      libraryDependencies ++= depends.shapeless(scalaVersion.value)) ++
-      moduleSettings("gwt") ++
-      Seq(name := "specs2-gwt")
-  ).dependsOn(core, matcherExtra, scalacheck)
+  // lazy val gwt = Project(id = "gwt", base = file("gwt"),
+  //   settings = Seq(
+  //     libraryDependencies ++= depends.shapeless(scalaVersion.value)) ++
+  //     moduleSettings("gwt") ++
+  //     Seq(name := "specs2-gwt")
+  // ).dependsOn(core, matcherExtra, scalacheck)
 
   lazy val html = Project(id = "html", base = file("html"),
     settings =
@@ -171,10 +171,12 @@ object build extends Build {
     (if (name == "specs2") "" else name) + "> " 
   }
 
+  def scalaSourceVersion(scalaBinaryVersion: String) = if (scalaBinaryVersion.startsWith("2.10")) "2.10" else "2.11"
+
   lazy val compilationSettings: Seq[Settings] = Seq(
     // https://gist.github.com/djspiewak/976cd8ac65e20e136f05
     unmanagedSourceDirectories in Compile ++=
-      Seq((sourceDirectory in Compile).value / s"scala-${scalaBinaryVersion.value}",
+      Seq((sourceDirectory in Compile).value / s"scala-${scalaSourceVersion(scalaBinaryVersion.value)}",
           if (scalazVersion.value.startsWith("7.0")) (sourceDirectory in Compile).value / s"scala-scalaz-7.0.x"
           else (sourceDirectory in Compile).value / s"scala-scalaz-7.1.x",
           if (scalazVersion.value.startsWith("7.0")) (sourceDirectory in(Test, test)).value / s"scala-scalaz-7.0.x"
@@ -261,11 +263,11 @@ object build extends Build {
   )
 
   lazy val aggregateCompile = ScopeFilter(
-    inProjects(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, scalacheck, mock),
+    inProjects(common, matcher, matcherExtra, core, html, analysis, form, markdown, junit, scalacheck, mock),
     inConfigurations(Compile))
 
   lazy val aggregateTest = ScopeFilter(
-    inProjects(common, matcher, matcherExtra, core, html, analysis, form, markdown, gwt, junit, scalacheck, mock, guide, examples),
+    inProjects(common, matcher, matcherExtra, core, html, analysis, form, markdown, junit, scalacheck, mock, guide, examples),
     inConfigurations(Test))
 
   lazy val releaseOfficialProcess = SettingKey[Seq[ReleaseStep]]("release-official-process")
