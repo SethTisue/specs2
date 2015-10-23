@@ -239,13 +239,8 @@ trait GWT extends StepParsers with Scripts { outer: FragmentsBuilder =>
 
   }
 
-  private implicit def toListAny[H <: HList]: ToList[H, Any] = new ToList[H, Any] {
-    def apply(l: H) = l match {
-      case head :: HNil => List(head)
-      case head :: tail => head :: tail.toList(toListAny)
-      case _            => List[Any]()
-    }
-  }
+  private implicit def toListAny[H <: HList]: ToList[H, Any] =
+    ToList[H, Any]
 
   private def value(r: Result) = r match { case DecoratedResult(v, _) => v; case _ => r }
 
