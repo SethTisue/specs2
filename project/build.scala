@@ -123,6 +123,8 @@ object build extends Build {
             "org.scalaz"     %% "scalaz-core"       % scalazVersion.value,
             "org.scalaz"     %% "scalaz-concurrent" % scalazVersion.value,
             "org.scala-lang" %  "scala-reflect"     % scalaVersion.value,
+            "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
+            "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
             scalacheckLib % "test")) ++
       Seq(name := "specs2-common")
   )
