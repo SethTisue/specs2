@@ -42,9 +42,11 @@ object TimedFuture {
 
     def ap[A, B](fa: =>TimedFuture[A])(ff: =>TimedFuture[(A) => B]): TimedFuture[B] = {
       val newCallback = { es: ExecutorServices =>
-        val ffRan = ff.runNow(es)
-        val faRan = fa.runNow(es)
-        faRan.flatMap(a => ffRan.map(f => f(a))(es.executionContext))(es.executionContext)
+        implicit val ec: ExecutionContext = es.executionContext
+
+        val ffRan = Future(ff.runNow(es)).flatMap(identity)
+        val faRan = Future(fa.runNow(es)).flatMap(identity)
+        faRan.flatMap(a => ffRan.map(f => f(a))(es.executionContext))
       }
       TimedFuture(newCallback)
     }
@@ -56,6 +58,17 @@ object TimedFuture {
 
     def bind[A, B](fa: TimedFuture[A])(f: A => TimedFuture[B]): TimedFuture[B] =
       TimedFuture[B](es => fa.runNow(es).flatMap(f(_).runNow(es))(es.executionContext))
+
+    override def ap[A, B](fa: =>TimedFuture[A])(ff: =>TimedFuture[(A) => B]): TimedFuture[B] = {
+      val newCallback = { es: ExecutorServices =>
+        implicit val ec: ExecutionContext = es.executionContext
+
+        Future(ff.runNow(es)).flatMap(identity).flatMap { f =>
+          Future(fa.runNow(es)).flatMap(identity).map(f)
+        }
+      }
+      TimedFuture(newCallback)
+    }
 
     override def tailrecM[A, B](a: A)(f: A => TimedFuture[Either[A, B]]): TimedFuture[B] =
       TimedFuture[B] { es =>
