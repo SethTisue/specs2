@@ -22,8 +22,8 @@ trait InterpolatedParsers extends JavaTokenParsers {
       empty(noVariable)
 
   lazy val interpolatedVariable: Parser[String] =
-    (("${" ~ interpolatedVariable ~ rep(interpolatedVariable) ~ "}") ^^ { case a~vv~b => a+vv.mkString+b }) |
-      (("${" ~ noVariable ~ rep(interpolatedVariable) ~ "}") ^^ { case a~vv~b => a+vv.mkString+b }) |
+    (("${" ~ interpolatedVariable ~ rep(interpolatedVariable) ~ "}") ^^ { case a~vv~b => s"$a${vv.mkString}$b" }) |
+      (("${" ~ noVariable ~ rep(interpolatedVariable) ~ "}") ^^ { case a~vv~b => s"$a${vv.mkString}$b" }) |
       (("${" ~ quotedExpression ~ "}") ^^ { case a~vv~b => a+vv.toString+b }) |
       "$$" |
       (("$" ~ ident) ^^ { case a~b => a+b }) |
