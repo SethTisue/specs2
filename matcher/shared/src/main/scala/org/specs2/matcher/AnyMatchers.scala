@@ -59,7 +59,7 @@ trait AnyBaseMatchers {
   def not[T](m: Matcher[T]) = m.not
 
   /** matches if a.isEmpty */
-  def beEmpty[T <% Any { def isEmpty: Boolean }] = new Matcher[T] {
+  def beEmpty[T](implicit ev: T => Any { def isEmpty: Boolean }) = new Matcher[T] {
     def apply[S <: T](iterable: Expectable[S]) = {
       // we need to pattern match on arrays otherwise we get a reflection exception
       iterable.value match {
@@ -229,10 +229,10 @@ trait AnyBeHaveMatchers extends BeHaveMatchers { outer: AnyMatchers =>
     def assignableFrom = result(outer.beAssignableFrom)
   }
   
-  implicit def anyWithEmpty[T <% Any { def isEmpty: Boolean }](result: MatchResult[T]): AnyWithEmptyMatchers[T] =
+  implicit def anyWithEmpty[T](result: MatchResult[T])(implicit ev: T => Any { def isEmpty: Boolean }): AnyWithEmptyMatchers[T] =
     new AnyWithEmptyMatchers(result)
 
-  class AnyWithEmptyMatchers[T <% Any { def isEmpty: Boolean }](result: MatchResult[T]) {
+  class AnyWithEmptyMatchers[T](result: MatchResult[T])(implicit ev: T => Any { def isEmpty: Boolean }) {
     def empty = result(outer.beEmpty[T])
     def beEmpty = result(outer.beEmpty[T])
   }
