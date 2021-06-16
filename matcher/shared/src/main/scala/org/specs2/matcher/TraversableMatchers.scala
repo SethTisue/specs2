@@ -65,8 +65,8 @@ trait TraversableBaseMatchers { outer =>
         if (diffs.isEmpty) "" else diffs.mkString("\n  "+msg+": ", ", ", "")
 
       result(missing.isEmpty && added.isEmpty,
-             t.value + "\n  contains the same elements as\n"+ seq,
-             t.value + message(missing, "is missing") + message(added, "must not contain"),
+             t.value.toString + "\n  contains the same elements as\n"+ seq,
+             t.value.toString + message(missing, "is missing") + message(added, "must not contain"),
              t)
     }
   }

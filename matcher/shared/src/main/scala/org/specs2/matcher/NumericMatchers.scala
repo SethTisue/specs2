@@ -235,8 +235,8 @@ case class BetweenMatcher[T](t1: T, t2: T, includeStart: Boolean = true, include
     def bracket(b: Boolean) = if (b) "[" else "]"
     val (start, end) = (bracket(includeStart), bracket(!includeEnd))
 
-    val (ok, ko) = (s.value+" is in "+start+t1+", "+t2+end,
-      s.value+" is not in "+start+t1+", "+t2+end)
+    val (ok, ko) = (s.value.toString+" is in "+start+t1+", "+t2+end,
+      s.value.toString+" is not in "+start+t1+", "+t2+end)
     result(included, ok, ko, s)
   }
 
