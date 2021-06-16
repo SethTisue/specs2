@@ -418,6 +418,7 @@ lazy val compilationSettings = Seq(
   maxErrors := 20,
   Compile / scalacOptions ++=
     Seq(
+      "-Xsource:3",
       "-Xlint",
       "-Ywarn-numeric-widen",
       "-Ywarn-value-discard",
